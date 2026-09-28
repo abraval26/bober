@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Обратный отсчёт</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 24px; color: #fff;
+      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(ellipse at top, #343434 0%, #171717 55%, #080808 100%);
+      text-align: center;
+    }
+    main { width: min(900px, 100%); }
+    h1 {
+      margin: 0 auto 42px; max-width: 850px;
+      font-size: clamp(1.8rem, 5vw, 3.4rem); line-height: 1.15;
+      font-weight: 800; letter-spacing: -0.03em;
+    }
+    #timer {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: clamp(8px, 2vw, 20px);
+    }
+    .unit {
+      padding: clamp(14px, 3vw, 28px) 8px;
+      border: 1px solid #555; border-radius: 18px;
+      background: linear-gradient(145deg, #242424, #101010);
+      box-shadow: 0 12px 36px #0008, inset 0 1px #ffffff12;
+    }
+    .number {
+      display: block; font-size: clamp(2rem, 8vw, 5.2rem);
+      font-weight: 900; font-variant-numeric: tabular-nums;
+      line-height: 1.05; color: #f2c14e;
+    }
+    .label {
+      display: block; margin-top: 12px; color: #c7c7c7;
+      font-size: clamp(.75rem, 2vw, 1.1rem); text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    #done { display: none; font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 800; color: #f2c14e; }
+    @media (max-width: 520px) {
+      #timer { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      h1 { margin-bottom: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>До объявления Бобра пидаром осталось:</h1>
+    <section id="timer" aria-live="polite">
+      <div class="unit"><span class="number" id="days">—</span><span class="label">Дней</span></div>
+      <div class="unit"><span class="number" id="hours">—</span><span class="label">Часов</span></div>
+      <div class="unit"><span class="number" id="minutes">—</span><span class="label">Минут</span></div>
+      <div class="unit"><span class="number" id="seconds">—</span><span class="label">Секунд</span></div>
+    </section>
+    <div id="done">Настал этот день!</div>
+  </main>
+  <script>
+    // Отсчёт до начала 28 октября 2026 года по местному времени устройства.
+    const target = new Date(2026, 9, 28, 0, 0, 0).getTime();
+    const ids = ["days", "hours", "minutes", "seconds"];
+    function updateCountdown() {
+      const diff = target - Date.now();
+      if (diff <= 0) {
+        document.getElementById("timer").style.display = "none";
+        document.getElementById("done").style.display = "block";
+        return;
+      }
+      const values = [
+        Math.floor(diff / 86400000),
+        Math.floor((diff % 86400000) / 3600000),
+        Math.floor((diff % 3600000) / 60000),
+        Math.floor((diff % 60000) / 1000)
+      ];
+      ids.forEach((id, i) => document.getElementById(id).textContent = String(values[i]).padStart(2, "0"));
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
